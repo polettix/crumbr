@@ -6,7 +6,10 @@ my $data = do(catpath($v, $d, 'data.pl'));
 
 can_ok(__PACKAGE__, 'crumbr');
 
-my $crumbr = crumbr(profile => 'URI', encoder => { array_open => '[', array_close => ']' });
+my $crumbr = crumbr(
+   profile => 'URI',
+   encoder => {array_open => '[', array_close => ']'}
+);
 isa_ok($crumbr, 'CODE');
 
 my $encoded = $crumbr->($data);

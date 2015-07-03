@@ -13,23 +13,21 @@ use Scalar::Util qw< blessed >;
 use Data::Crumbr::Util;
 
 my $jenc = Data::Crumbr::Util::json_leaf_encoder();
+my $ienc = Data::Crumbr::Util::id_encoder();
 
 has array_open        => (default => sub { '' });
 has array_close       => (default => sub { '' });
 has array_key_prefix  => (default => sub { '[' });
 has array_key_suffix  => (default => sub { ']' });
-has array_key_encoder => (default => sub { sub { $_[0] } });
-
-has hash_open       => (default => sub { '' });
-has hash_close      => (default => sub { '' });
-has hash_key_prefix => (default => sub { '{' });
-has hash_key_suffix => (default => sub { '}' });
-has hash_key_encoder => (default => sub { $jenc });
-
-has value_encoder =>    (default => sub { $jenc });
-
-has keys_separator  => (default => sub { '' });
-has value_separator => (default => sub { ':' });
+has array_key_encoder => (default => sub { $ienc });
+has hash_open         => (default => sub { '' });
+has hash_close        => (default => sub { '' });
+has hash_key_prefix   => (default => sub { '{' });
+has hash_key_suffix   => (default => sub { '}' });
+has hash_key_encoder  => (default => sub { $jenc });
+has value_encoder     => (default => sub { $jenc });
+has keys_separator    => (default => sub { '' });
+has value_separator   => (default => sub { ':' });
 
 has output => (
    default => sub { __output() },
