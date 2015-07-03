@@ -1,7 +1,18 @@
-use Test::More tests => 1;
+use Test::More tests => 5;
 
 BEGIN {
-   use_ok('App::Crumbr');
-}
+   use_ok($_)
+     for (
+      qw<
+      Data::Crumbr
+      Data::Crumbr::Default
+      Data::Crumbr::Default::JSON
+      Data::Crumbr::Default::URI
+      Data::Crumbr::Util
+      >
+     );
+} ## end BEGIN
 
-diag("Testing App::Crumbr $App::Crumbr::VERSION");
+diag("Testing App::Crumbr $Data::Crumbr::VERSION");
+
+done_testing();
