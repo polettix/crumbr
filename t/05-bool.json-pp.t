@@ -1,8 +1,7 @@
 use Test::More;
 
 eval "use JSON::PP";
-plan skip_all =>
-  "JSON::PP required for testing JSON::PP::Boolean ($@)"
+plan skip_all => "JSON::PP required for testing JSON::PP::Boolean ($@)"
   if $@;
 
 use Data::Crumbr;
@@ -11,7 +10,7 @@ my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
 
 $data->{false} = JSON::PP::false();
-$data->{true} = JSON::PP::true();
+$data->{true}  = JSON::PP::true();
 
 can_ok(__PACKAGE__, 'crumbr');
 
