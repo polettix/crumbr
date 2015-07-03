@@ -4,6 +4,7 @@ package Data::Crumbr::Util;
 use 5.018;
 use strict;
 use Carp;
+use Scalar::Util qw< reftype blessed >;
 
 sub json_leaf_encoder {
    require B;
@@ -18,6 +19,13 @@ sub _json_leaf_encode {
    return '{}' if $reftype eq 'HASH';
    return (${$_[0]} ? 'true' : 'false')
      if $reftype eq 'SCALAR';
+
+   if (my $package = blessed($_[0])) {
+      my $reftype = reftype($_[0]);
+      return (${$_[0]} ? 'true' : 'false')
+        if ($reftype eq 'SCALAR') && ($package =~ /bool/mxsi);
+   }
+
    croak "unsupported ref type $reftype" if $reftype;
 
    my $number_flags = B::SVp_IOK() | B::SVp_NOK();

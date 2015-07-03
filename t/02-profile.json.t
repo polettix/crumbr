@@ -16,6 +16,7 @@ my $expected = '{"array":["what"]}
 {"array":["ever"]}
 {"array":[{"empty":[]}]}
 {"array":[{"inner":"part"}]}
+{"false":false}
 {"four":"4.0"}
 {"hash":{"ar":[1]}}
 {"hash":{"ar":[2]}}
@@ -24,6 +25,7 @@ my $expected = '{"array":["what"]}
 {"hash":{"with \u265C":{}}}
 {"one":"1"}
 {"three":3.1}
+{"true":true}
 {"two":2}';
 
 is($encoded, $expected, 'data as expected');

@@ -1,8 +1,17 @@
 use Test::More;
+
+eval "use JSON::PP";
+plan skip_all =>
+  "JSON::PP required for testing JSON::PP::Boolean ($@)"
+  if $@;
+
 use Data::Crumbr;
 use File::Spec::Functions qw< splitpath catpath >;
 my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
+
+$data->{false} = JSON::PP::false();
+$data->{true} = JSON::PP::true();
 
 can_ok(__PACKAGE__, 'crumbr');
 
@@ -34,3 +43,4 @@ two 2';
 is($encoded, $expected, 'data as expected');
 
 done_testing();
+

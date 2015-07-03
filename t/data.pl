@@ -4,6 +4,8 @@ my $data = {
    two => 2,
    three => 3.1,
    four => '4.0',
+   true => \1,
+   false => \0,
    array => [ qw< what ever >, { inner => 'part', empty => [] } ],
    hash => {
       'with ♜' => {},

@@ -16,6 +16,7 @@ my $expected = 'array/0 "what"
 array/1 "ever"
 array/2/empty []
 array/2/inner "part"
+false false
 four "4.0"
 hash/ar/0 1
 hash/ar/1 2
@@ -24,6 +25,7 @@ hash/something "funny \u263A \u263B"
 hash/with%20%E2%99%9C {}
 one "1"
 three 3.1
+true true
 two 2';
 
 is($encoded, $expected, 'data as expected');

@@ -1,8 +1,16 @@
 use Test::More;
+
+eval "use Mojo::JSON";
+plan skip_all => "Mojo::JSON required for this test"
+  if $@;
+
 use Data::Crumbr;
 use File::Spec::Functions qw< splitpath catpath >;
 my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
+
+$data->{false} = Mojo::JSON::false();
+$data->{true}  = Mojo::JSON::true();
 
 can_ok(__PACKAGE__, 'crumbr');
 
@@ -34,3 +42,4 @@ two 2';
 is($encoded, $expected, 'data as expected');
 
 done_testing();
+
