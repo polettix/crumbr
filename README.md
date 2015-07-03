@@ -1,9 +1,9 @@
 NAME
 ====
 
-App::Crumbr - [ a brief description of the distribution ]
+App::Crumbr - Render data structures for easy searching and parsing
 
-SYNOPSIS
+SYNOPSYS
 ========
 
 

@@ -1,6 +1,6 @@
 package App::Crumbr;
 
-# ABSTRACT: [ a brief description of the distribution ]
+# ABSTRACT: Render data structures for easy searching and parsing
 
 use strict;
 use warnings;
