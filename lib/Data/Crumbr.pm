@@ -22,8 +22,27 @@ has encoder => (
    coerce  => \&__encoder,
 );
 
+sub __load_class {
+   my ($class) = @_;
+   (my $packname = "$class.pm") =~ s{::}{/}gmxs;
+   require $packname;
+   return $class;
+}
+
 sub crumbr {
-   my $wh = __PACKAGE__->new(@_);
+   my %args = (@_ && ref($_[0])) ? %{$_[0]} : @_;
+   if (defined(my $name = delete $args{profile})) {
+      my $class = __PACKAGE__ . "::Default::$name";
+      my $profile = __load_class($class)->profile();
+      my $encoder = delete($args{encoder}) // {};
+      %$encoder = (
+         %$profile,
+         %$encoder, # allow some overriding
+         class => '::Default', # but not on this one
+      );
+      %args = (encoder => $encoder);
+   }
+   my $wh = __PACKAGE__->new(%args);
    return sub { $wh->encode(@_) };
 }
 
@@ -38,9 +57,7 @@ sub __encoder {
       $class = '::Default' unless defined $class;
       $class = __PACKAGE__ . $class
         if substr($class, 0, 2) eq '::';
-      (my $packname = "$class.pm") =~ s{::}{/}gmxs;
-      require $packname;
-      $e = $class->new(@parameters);
+      $e = __load_class($class)->new(@parameters);
    } ## end if (!blessed($e))
    return $e;
 } ## end sub get_encoder
@@ -50,14 +67,14 @@ sub encode {
    my $encoder = $self->encoder();
    $encoder->reset();
 
-   my @stack = { data => $data, type => ref($data) };
+   my @stack = (
+      { closers => '' },
+      { data => $data, type => ref($data) },
+   );
    ITERATION:
-   while (@stack) {
+   while (@stack > 1) { # frame #0 is dummy
       my $frame = $stack[-1];
-      if (! $frame->{type}) {
-         $encoder->scalar_leaf(\@stack);
-      }
-      elsif ($frame->{type} eq 'ARRAY') {
+      if ($frame->{type} eq 'ARRAY') {
          if (! scalar(@{$frame->{data}})) {
             $encoder->array_leaf(\@stack);
          }
@@ -66,6 +83,8 @@ sub encode {
                $encoder->array_keys_iterator($frame->{data});
             if (defined(my $key = $iterator->())) {
                $frame->{encoded} = $encoder->array_key($key);
+               $frame->{closers} =
+                  $encoder->array_close() . $stack[-2]{closers};
                my $child_data = $frame->{data}[$key];
                push @stack, {
                   data => $child_data,
@@ -84,6 +103,8 @@ sub encode {
                $encoder->hash_keys_iterator($frame->{data});
             if (defined(my $key = $iterator->())) {
                $frame->{encoded} = $encoder->hash_key($key);
+               $frame->{closers} =
+                  $encoder->hash_close() . $stack[-2]{closers};
                my $child_data = $frame->{data}{$key};
                push @stack, {
                   data => $child_data,
@@ -93,8 +114,8 @@ sub encode {
             }
          }
       }
-      else {
-         croak "cannot handle frame of type $frame->{type}";
+      else { # treat as leaf scalar
+         $encoder->scalar_leaf(\@stack);
       }
 
       # only leaves or end-of-container arrive here

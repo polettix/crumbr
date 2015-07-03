@@ -10,27 +10,31 @@ use warnings;
 use Carp;
 use English qw< -no_match_vars >;
 use Scalar::Util qw< blessed >;
+use Data::Crumbr::Util;
 
-has hash_key_prefix   => (default => sub { '{' });
-has hash_key_suffix   => (default => sub { '}' });
+my $jenc = Data::Crumbr::Util::json_leaf_encoder();
+
+has array_open        => (default => sub { '' });
+has array_close       => (default => sub { '' });
 has array_key_prefix  => (default => sub { '[' });
 has array_key_suffix  => (default => sub { ']' });
-has keys_separator    => (default => sub { '' });
-has value_separator   => (default => sub { ':' });
-has array_key_encoder => (default => \&__json_encoder);
-has hash_key_encoder  => (default => \&__json_encoder);
-has value_encoder     => (default => \&__json_encoder);
+has array_key_encoder => (default => sub { sub { $_[0] } });
 
-has output            => (
+has hash_open       => (default => sub { '' });
+has hash_close      => (default => sub { '' });
+has hash_key_prefix => (default => sub { '{' });
+has hash_key_suffix => (default => sub { '}' });
+has hash_key_encoder => (default => sub { $jenc });
+
+has value_encoder =>    (default => sub { $jenc });
+
+has keys_separator  => (default => sub { '' });
+has value_separator => (default => sub { ':' });
+
+has output => (
    default => sub { __output() },
-   coerce => \&__output,
+   coerce  => \&__output,
 );
-
-sub __json_encoder {
-   require JSON;
-   my $encoder = JSON->new()->allow_nonref()->utf8();
-   return sub { $encoder->encode($_[0]) };
-}
 
 sub __output {
    my ($output) = @_;
@@ -52,22 +56,26 @@ sub __output {
    return sub {
       return unless @_;
       print {$output} $_[0], "\n";
-   } if $reftype eq 'GLOB';
+     }
+     if $reftype eq 'GLOB';
 
    return sub {
       return $output unless @_;
       push @$output, $_[0];
-   } if $reftype eq 'ARRAY';
+     }
+     if $reftype eq 'ARRAY';
 
    return sub {
       return unless @_;
       $output->print($_[0]);
-   } if blessed($output);
+     }
+     if blessed($output);
 
    return sub {
       return unless @_;
       return $output->($_[0]);
-   } if $reftype eq 'CODE';
+     }
+     if $reftype eq 'CODE';
 
    croak "invalid output";
 } ## end sub __output
@@ -79,11 +87,17 @@ sub leaf {
    my @components = $venc->($stack->[-1]{data});
 
    my @keys = map { $_->{encoded} } @$stack;
-   pop @keys;    # last item of @$stack is the leaf, drop it
-   unshift @components, join $self->keys_separator(), @keys
-     if @keys;
+   shift @keys;    # first item of @$stack is dummy
+   pop @keys;      # last item of @$stack is the leaf, drop it
 
-   $self->output()->(join $self->value_separator(), @components);
+   my $closers = '';
+   if (@keys) {
+      unshift @components, join $self->keys_separator(), @keys;
+      $closers = $stack->[-2]{closers};
+   }
+
+   my $record = join $self->value_separator(), @components;
+   $self->output()->($record . $closers);
 } ## end sub leaf
 
 {
@@ -111,14 +125,16 @@ sub hash_keys_iterator {
 
 sub array_key {
    my ($self, $key) = @_;
-   return join '', $self->array_key_prefix(),
+   return join '', $self->array_open(),
+     $self->array_key_prefix(),
      $self->array_key_encoder()->($key),
      $self->array_key_suffix();
 } ## end sub array_key
 
 sub hash_key {
    my ($self, $key) = @_;
-   return join '', $self->hash_key_prefix(),
+   return join '', $self->hash_open(),
+     $self->hash_key_prefix(),
      $self->hash_key_encoder()->($key),
      $self->hash_key_suffix();
 } ## end sub hash_key
@@ -126,17 +142,17 @@ sub hash_key {
 sub result {
    my ($self) = @_;
    my $output = $self->output()->()
-      or return;
+     or return;
    return join "\n", @$output;
-}
+} ## end sub result
 
 sub reset {
    my ($self) = @_;
    my $output = $self->output()->()
-      or return;
+     or return;
    @$output = ();
    return;
-}
+} ## end sub reset
 
 1;
 __END__
