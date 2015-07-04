@@ -3,7 +3,7 @@ NAME
 
 Data::Crumbr - Render data structures for easy searching and parsing
 
-SYNOPSYS
+SYNOPSIS
 ========
 
     use Data::Crumbr;
