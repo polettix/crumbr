@@ -126,3 +126,7 @@ sub encode {
 
 1;
 __END__
+
+SYNOPSYS
+
+   whatever

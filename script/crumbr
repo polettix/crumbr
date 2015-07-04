@@ -1,0 +1,264 @@
+#!/usr/bin/env perl
+# ABSTRACT: Render data structures for easy searching and parsing
+use strict;
+use warnings;
+use Carp;
+use Pod::Usage qw< pod2usage >;
+use Getopt::Long qw< :config gnu_getopt >;
+use English qw< -no_match_vars >;
+my $VERSION = '0.0.1';
+use 5.018;
+
+use Data::Crumbr;
+
+my %config = (
+   encoding => 'utf8',
+   output   => '-',
+   profile  => 'Default',
+   type     => 'yaml',
+);
+GetOptions(
+   \%config,
+   qw<
+     usage! help! man! version!
+     encoding|e=s
+     output|o=s
+     profile|p=s
+     type|t=s
+     >
+) or pod2usage(-verbose => 99, -sections => 'USAGE');
+pod2usage(message => "$0 $VERSION", -verbose => 99, -sections => ' ')
+  if $config{version};
+pod2usage(-verbose => 99, -sections => 'USAGE') if $config{usage};
+pod2usage(-verbose => 99, -sections => 'USAGE|EXAMPLES|OPTIONS')
+  if $config{help};
+pod2usage(-verbose => 2) if $config{man};
+
+# Script implementation here
+crumbr(
+   profile => $config{profile},
+   encoder => {output => get_output(\%config)}
+)->(read_data(\%config, $ARGV[0]));
+
+sub read_data {
+   my ($config, $filename) = @_;
+   $filename //= '-';
+   my $reader = __PACKAGE__->can("read_data_$config->{type}")
+     or die "unsupported input type $config->{type}\n";
+   return $reader->($config, $filename);
+} ## end sub read_data
+
+sub read_data_yaml {
+   my ($config, $filename) = @_;
+   my $unicode_string = slurp($filename, $config{encoding});
+
+   for my $class (qw< YAML::XS YAML YAML::Tiny >) {
+      eval "use $class";
+      next if $EVAL_ERROR;
+      my $function = $class->can('Load');
+      return $function->($unicode_string);
+   }
+   die "cannot find any YAML module\n";
+   return;
+}
+
+sub read_data_json {
+   my ($config, $filename) = @_;
+   my $unicode_string = slurp($filename, $config{encoding});
+
+   require Encode;
+   my $utf8_octets =
+      Encode::encode('UTF-8', $unicode_string, Encode::FB_CROAK());
+
+   my @cs = qw< Cpanel::JSON::XS JSON::XS Mojo::JSON JSON::PP >;
+   for my $class (@cs) {
+      eval "use $class";
+      next if $EVAL_ERROR;
+      my $function = $class->can('decode_json');
+      my $retval = eval { $function->($utf8_octets) };
+      die "errors parsing input: $EVAL_ERROR\n"
+         if $EVAL_ERROR;
+      return $retval;
+   }
+   die "cannot find any JSON module\n";
+   return;
+} ## end sub read_data_json
+
+sub slurp_octets {
+   require Encode;
+   return Encode::encode('UTF-8', slurp(@_), Encode::FB_CROAK());
+} ## end sub slurp_octets
+
+sub slurp {
+   my ($filename, $encoding) = @_;
+   my $fh = \*STDIN;
+   if ($filename ne '-') {
+      $fh = undef;
+      open $fh, '<', $filename
+        or die "open('$filename'): $OS_ERROR\n";
+   }
+   binmode $fh, ":encoding($encoding)";
+   local $INPUT_RECORD_SEPARATOR = undef;    # slurp mode
+   return <$fh>;
+} ## end sub slurp_octets
+
+sub get_output {
+   my ($config) = @_;
+   my $fh = \*STDOUT;
+   if ($config->{output} ne '-') {
+      $fh = undef;
+      open $fh, '>', $config->{output}
+        or die "open('$config->{output}'): $OS_ERROR\n";
+   }
+   binmode $fh, ":encoding($config->{encoding})";
+   return $fh;
+} ## end sub get_output
+
+__END__
+
+=head1 NAME
+
+crumbr - Render data structures for easy searching and parsing
+
+=head1 VERSION
+
+Ask the version number to the script itself, calling:
+
+   shell$ crumbr --version
+
+
+=head1 USAGE
+
+   crumbr [--usage] [--help] [--man] [--version]
+
+   crumbr
+
+=head1 EXAMPLES
+
+   shell$ crumbr
+
+=for l'autore, da riempire:
+   Qualche breve esempio con codice che mostri l'utilizzo più comune.
+   Questa sezione sarà quella probabilmente più letta, perché molti
+   utenti si annoiano a leggere tutta la documentazione, per cui
+   è meglio essere il più educativi ed esplicativi possibile.
+
+
+=head1 DESCRIPTION
+
+=for l'autore, da riempire:
+   Fornite una descrizione completa del modulo e delle sue caratteristiche.
+   Aiutatevi a strutturare il testo con le sottosezioni (=head2, =head3)
+   se necessario.
+
+
+=head1 OPTIONS
+
+=for l'autore, da riempire:
+   Una descrizione di tutte le opzioni possibili nella chiamata allo script
+
+=over
+
+=item --help
+
+print a somewhat more verbose help, showing usage, this description of
+the options and some examples from the synopsis.
+
+=item --man
+
+print out the full documentation for the script.
+
+=item --usage
+
+print a concise usage line and exit.
+
+=item --version
+
+print the version of the script.
+
+=back
+
+=head1 DIAGNOSTICS
+
+=for l'autore, da riempire:
+   Elencate qualunque singolo errore o messaggio di avvertimento che
+   lo script può generare, anche quelli che non "accadranno mai".
+   Includete anche una spiegazione completa di ciascuno di questi
+   problemi, una o più possibili cause e qualunque rimedio
+   suggerito.
+
+
+=over
+
+=item C<< Error message here, perhaps with %s placeholders >>
+
+[Descrizione di un errore]
+
+=item C<< Another error message here >>
+
+[Descrizione di un errore]
+
+[E così via...]
+
+=back
+
+
+=head1 CONFIGURATION AND ENVIRONMENT
+
+=for l'autore, da riempire:
+   Una spiegazione completa di qualunque sistema di configurazione
+   utilizzato dallo script, inclusi i nomi e le posizioni dei file di
+   configurazione, il significato di ciascuna variabile di ambiente
+   utilizzata e proprietà che può essere impostata. Queste descrizioni
+   devono anche includere dettagli su eventuali linguaggi di configurazione
+   utilizzati.
+  
+crumbr requires no configuration files or environment variables.
+
+
+=head1 DEPENDENCIES
+
+=for l'autore, da riempire:
+   Una lista di tutti i moduli su cui si basa questo script,
+   incluse eventuali restrizioni sulle relative versioni, ed una
+   indicazione se il modulo in questione è parte della distribuzione
+   standard di Perl, parte della distribuzione del modulo o se
+   deve essere installato separatamente.
+
+None.
+
+
+=head1 BUGS AND LIMITATIONS
+
+=for l'autore, da riempire:
+   Una lista di tutti i problemi conosciuti relativi al modulo,
+   insime a qualche indicazione sul fatto che tali problemi siano
+   plausibilmente risolti in una versione successiva. Includete anche
+   una lista delle restrizioni sulle funzionalità fornite dal
+   modulo: tipi di dati che non si è in grado di gestire, problematiche
+   relative all'efficienza e le circostanze nelle quali queste possono
+   sorgere, limitazioni pratiche sugli insiemi dei dati, casi
+   particolari che non sono (ancora) gestiti, e così via.
+
+No bugs have been reported.
+
+Please report any bugs or feature requests through http://rt.cpan.org/
+
+
+=head1 AUTHOR
+
+Flavio Poletti C<polettix@cpan.org>
+
+
+=head1 LICENCE AND COPYRIGHT
+
+Copyright (c) 2015, Flavio Poletti C<polettix@cpan.org>.
+
+This module is free software.  You can redistribute it and/or
+modify it under the terms of the Artistic License 2.0.
+
+This program is distributed in the hope that it will be useful,
+but without any warranty; without even the implied warranty of
+merchantability or fitness for a particular purpose.
+
+=cut

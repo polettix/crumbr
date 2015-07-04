@@ -1,4 +1,4 @@
 *.swp
-App-Crumbr-*.tar.gz
-App-Crumbr-*/
+Data-Crumbr-*.tar.gz
+Data-Crumbr-*/
 .build/
