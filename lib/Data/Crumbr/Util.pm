@@ -85,3 +85,61 @@ sub id_encoder {
 
 1;
 __END__
+
+=pod
+
+=encoding utf-8
+
+=head1 DESCRIPTION
+
+Utility functions for Data::Crumbr.
+
+=head2 INTERFACE
+
+=over
+
+=item B<< id_encoder >>
+
+   my $encoder = id_encoder();
+
+trivial encoding function that just returns its first argument (i.e. no
+real encoding is performed).
+
+=item B<< json_leaf_encoder >>
+
+   my $encoder = json_leaf_encoder();
+
+encoding function that returns a JSON-compliant value, only for leaf
+values. It works on:
+
+=over
+
+=item *
+
+plain strings, returned after JSON encoding (e.g. tranformation of
+newlines, etc.)
+
+=item *
+
+empty array references, in which case string C<[]> is returned
+
+=item *
+
+empty hash references, in which case string C<{}> is returned
+
+=item *
+
+null values, in which case string C<null> is returned
+
+=back
+
+=item B<< uri_encoder >>
+
+   my $encoder = uri_encoder();
+
+encoding function that then encodes strings according to URI encoding
+(i.e. percent-encoding).
+
+=back
+
+=cut

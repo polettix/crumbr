@@ -128,6 +128,8 @@ sub encode {
 
 =pod
 
+=encoding utf-8
+
 =head1 SYNOPSIS
 
    use Data::Crumber; # imports `crumbr`
@@ -405,23 +407,203 @@ array identifiers, i.e. there's no chance that you will mistake an array
 index for a hash key (because they are embedded in different bracket
 types).
 
+=item B<< JSON >>
 
-=item B<< >>
+this profile always provides you compact JSON-compliant string
+representations that contain only one single leaf value.
+
+It has the following characteristics:
+
+=over
+
+=item *
+
+openers and closers are what you would expect for JSON objects and
+arrays:
+
+   array_open  => '['
+   array_close => ']'
+   hash_open   => '{'
+   hash_close  => '}'
+
+=item *
+
+there is only one non-empty suffix, i.e. the hash key suffix, so that
+we can separate the hash key from the value with C<:> according to JSON:
+
+   array_key_prefix => ''
+   array_key_suffix => ''
+   hash_key_prefix  => ''
+   hash_key_suffix  => ':'
+
+=item *
+
+array keys are not printed:
+
+   array_key_encoder => sub { }
+
+=item *
+
+hash keys are JSON encoded:
+
+   hash_key_encoder  => Data::Crumbr::Util::json_encoder()
+
+=item *
+
+no separators are needed:
+
+   keys_separator  => ''
+   value_separator => ''
+
+=item *
+
+leaf values encoded as JSON scalars:
+
+   value_encoder => Data::Crumbr::Util::json_leaf_encoder
 
 =back
 
 
 
-If your data structure is simple and you have control over it,
-you can also ask Data::Crumbr to be less verbose by using
-the I<profile>
+=item B<< URI >>
+
+this is the simplest of the profiles, and sacrifices the possibility to
+distinguish between hash and array keys to the altar of simplicity.
+
+It has the following characteristics:
+
+=over
+
+=item *
+
+no openers, closers, prefixes or suffixes:
+
+   array_open  => ''
+   array_close => ''
+   array_key_prefix => ''
+   array_key_suffix => ''
+
+   hash_open   => ''
+   hash_close  => ''
+   hash_key_prefix => ''
+   hash_key_suffix => ''
+
+=item *
+
+array keys are printed verbatim
+
+=item *
+
+hash keys are URI encoded
+
+   hash_key_encoder  => Data::Crumbr::Util::uri_encoder
+
+=item *
+
+keys are separated by a slash character C</> and values are separated by
+a single space C< >:
+
+   keys_separator  => '/'
+   value_separator => ' '
+
+=item *
+
+leaf values encoded as JSON scalars:
+
+   value_encoder => Data::Crumbr::Util::json_leaf_encoder
+
+=back
+
+=back
+
+
 
 =head1 INTERFACE
 
 There are two ways to use Data::Crumber: a function C<crumbr>,
 that is exported by default, and the object-oriented interface.
 
+=over
 
+=item B<< crumbr >>
+
+   $subref = crumbr(%args); # OR
+   $subref = crumbr(\%args);
+
+get a I<crumbr> generator based on provided C<%args>.
+
+Returns a reference to a sub, which can then be called upon a data
+structure in order to get the I<crumbed> version.
+
+The input arguments can be:
+
+=over
+
+=item C<< encoder >>
+
+details about the encoder, see L</Profiles> for the available key-value
+pairs. In addition, you can also set the following:
+
+=over
+
+=item C<< output >>
+
+the output channel to use for sending encoded data. This can be:
+
+=over
+
+=item * I<filename>
+
+this will be opened in raw mode and used to send the output
+
+=item * I<filehandle>
+
+used directly
+
+=item * I<array reference>
+
+each output line will be pushed as a new element in the array
+
+=item * I<object reference>
+
+which is assumed to support the C<print()> method, that will be called
+with each generated line
+
+=item * I<sub reference>
+
+which will be called with each generated line
+
+=back
+
+=back
+
+=item C<< profile >>
+
+the name of a profile to use as a base - see L</Profiles>. Settings in
+the profile are always overridden by corresponding ones in the provided
+encoder, if any.
+
+=back
+
+=item B<< encode >>
+
+   $dc->encode($data_structure);
+
+generate the encoding for the provided C<$data_structure>. Output is
+generated depending on how it is specified, see L</crumbr> above.
+
+=item B<< new >>
+
+   my $dc = Data::Crumber->new(encoder => \%args);
+
+create a new instance of C<Data::Crumbr>. Data provided for the
+C<encoder> parameter (i.e. C<%args>) are those discussed in
+L</Profiles>.
+
+The new instance can then be used to encode data using the C</encode>
+method.
+   
+=back
 
 =cut
 

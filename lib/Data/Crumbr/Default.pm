@@ -154,3 +154,67 @@ sub reset {
 
 1;
 __END__
+
+=pod
+
+=encoding utf-8
+
+=head1 DESCRIPTION
+
+This is the default encoder implementation, and most probably the only
+oney you really need. And most probably, you really not need to directly
+use it.
+
+=head1 INTERFACE
+
+=over
+
+=item B<< array_key >>
+
+returns the encoded array key, optionally opening an array and keeping
+into account the prefix, the suffix and the encoder for the key
+
+=item B<< array_keys_iterator >>
+
+returns an iterator sub starting from 0 up to the number of elements in
+the array
+
+=item B<< hash_key >>
+
+returns the encoded hash key, optionally opening an hash and keeping
+into account the prefix, the suffix and the encoder for the key
+
+=item B<< hash_keys_iterator >>
+
+returns an iterator sub that returns each key in the input hash, sorted
+lexicographically
+
+=item B<< leaf >>
+
+=item B<< array_leaf >>
+
+=item B<< hash_leaf >>
+
+=item B<< scalar_leaf >>
+
+this method is called whenever an external iteration component hits a
+leaf and wants to push a new encoded record to the output
+
+=item B<< new >>
+
+   my $enc = Data::Crumbr::Default->new(%args);
+
+create a new encoder object
+
+=item B<< reset >>
+
+reset the encoder, i.e. wipe out all the internal state to start a new
+encoding cycle.
+
+=item B<< result >>
+
+get the outcome of the encoding. Not guaranteed to work.
+
+=back
+
+=cut

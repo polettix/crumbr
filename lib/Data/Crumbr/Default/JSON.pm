@@ -26,3 +26,27 @@ sub profile {
 
 1;
 __END__
+
+=pod
+
+=encoding utf-8
+
+=head1 DESCRIPTION
+
+Profile for JSON encoder
+
+=head1 INTERFACE
+
+=over
+
+=item B<< profile >>
+
+   my $profile = Data::Crumbr::Default::JSON->profile();
+
+returns a default profile, i.e. encoder data to be used to instantiate a
+Data::Crumbr::Default encoder. See L</Data::Crumbr> for details about
+this profile.
+
+=back
+
+=cut
