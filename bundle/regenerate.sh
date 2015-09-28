@@ -7,7 +7,7 @@ target="$MYDIR/crumbr"
 rm -f "$target" &&
 mobundle                               \
    --head-from-paragraph               \
-   --program "$ROOTDIR/script/crumbr"  \
+   --program "$ROOTDIR/bin/crumbr"  \
    --output "$target"                  \
    --include "$ROOTDIR/lib"            \
    --modules-from "$MYDIR/modules.txt" &&
