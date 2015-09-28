@@ -1,13 +1,15 @@
 #!/usr/bin/env perl
 # ABSTRACT: Render data structures for easy searching and parsing
+# PODNAME: crumbr
 use strict;
 use warnings;
 use Carp;
 use Pod::Usage qw< pod2usage >;
 use Getopt::Long qw< :config gnu_getopt >;
 use English qw< -no_match_vars >;
-my $VERSION = '0.0.1';
 use 5.018;
+
+our $VERSION = '0.0.1';
 
 use Data::Crumbr;
 
@@ -116,17 +118,6 @@ sub get_output {
 
 __END__
 
-=head1 NAME
-
-crumbr - Render data structures for easy searching and parsing
-
-=head1 VERSION
-
-Ask the version number to the script itself, calling:
-
-   shell$ crumbr --version
-
-
 =head1 USAGE
 
    crumbr [--usage] [--help] [--man] [--version]
@@ -137,19 +128,10 @@ Ask the version number to the script itself, calling:
 
    shell$ crumbr
 
-=for l'autore, da riempire:
-   Qualche breve esempio con codice che mostri l'utilizzo più comune.
-   Questa sezione sarà quella probabilmente più letta, perché molti
-   utenti si annoiano a leggere tutta la documentazione, per cui
-   è meglio essere il più educativi ed esplicativi possibile.
-
 
 =head1 DESCRIPTION
 
-=for l'autore, da riempire:
-   Fornite una descrizione completa del modulo e delle sue caratteristiche.
-   Aiutatevi a strutturare il testo con le sottosezioni (=head2, =head3)
-   se necessario.
+Bottom line is: look for L<https://github.com/polettix/teepee teepee>.
 
 
 =head1 OPTIONS
@@ -178,87 +160,8 @@ print the version of the script.
 
 =back
 
-=head1 DIAGNOSTICS
-
-=for l'autore, da riempire:
-   Elencate qualunque singolo errore o messaggio di avvertimento che
-   lo script può generare, anche quelli che non "accadranno mai".
-   Includete anche una spiegazione completa di ciascuno di questi
-   problemi, una o più possibili cause e qualunque rimedio
-   suggerito.
-
-
-=over
-
-=item C<< Error message here, perhaps with %s placeholders >>
-
-[Descrizione di un errore]
-
-=item C<< Another error message here >>
-
-[Descrizione di un errore]
-
-[E così via...]
-
-=back
-
-
 =head1 CONFIGURATION AND ENVIRONMENT
 
-=for l'autore, da riempire:
-   Una spiegazione completa di qualunque sistema di configurazione
-   utilizzato dallo script, inclusi i nomi e le posizioni dei file di
-   configurazione, il significato di ciascuna variabile di ambiente
-   utilizzata e proprietà che può essere impostata. Queste descrizioni
-   devono anche includere dettagli su eventuali linguaggi di configurazione
-   utilizzati.
-  
 crumbr requires no configuration files or environment variables.
-
-
-=head1 DEPENDENCIES
-
-=for l'autore, da riempire:
-   Una lista di tutti i moduli su cui si basa questo script,
-   incluse eventuali restrizioni sulle relative versioni, ed una
-   indicazione se il modulo in questione è parte della distribuzione
-   standard di Perl, parte della distribuzione del modulo o se
-   deve essere installato separatamente.
-
-None.
-
-
-=head1 BUGS AND LIMITATIONS
-
-=for l'autore, da riempire:
-   Una lista di tutti i problemi conosciuti relativi al modulo,
-   insime a qualche indicazione sul fatto che tali problemi siano
-   plausibilmente risolti in una versione successiva. Includete anche
-   una lista delle restrizioni sulle funzionalità fornite dal
-   modulo: tipi di dati che non si è in grado di gestire, problematiche
-   relative all'efficienza e le circostanze nelle quali queste possono
-   sorgere, limitazioni pratiche sugli insiemi dei dati, casi
-   particolari che non sono (ancora) gestiti, e così via.
-
-No bugs have been reported.
-
-Please report any bugs or feature requests through http://rt.cpan.org/
-
-
-=head1 AUTHOR
-
-Flavio Poletti C<polettix@cpan.org>
-
-
-=head1 LICENCE AND COPYRIGHT
-
-Copyright (c) 2015, Flavio Poletti C<polettix@cpan.org>.
-
-This module is free software.  You can redistribute it and/or
-modify it under the terms of the Artistic License 2.0.
-
-This program is distributed in the hope that it will be useful,
-but without any warranty; without even the implied warranty of
-merchantability or fitness for a particular purpose.
 
 =cut
