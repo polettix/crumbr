@@ -1,2 +1,6 @@
 {{$NEXT}}
+
+Changes for Data::Crumbr:
+
+0.1.0     2015-09-28 15:29:53+02:00 Europe/Rome
    - initial release on CPAN
