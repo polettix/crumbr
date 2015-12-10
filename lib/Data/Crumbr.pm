@@ -5,7 +5,6 @@ package Data::Crumbr;
 # Inlined Mo
 use Mo qw< default coerce >;
 
-use 5.018;
 use strict;
 use warnings;
 use Carp;

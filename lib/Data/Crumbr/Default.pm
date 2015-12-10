@@ -4,7 +4,6 @@ package Data::Crumbr::Default;
 
 use Mo qw< default coerce >;
 
-use 5.018;
 use strict;
 use warnings;
 use Carp;
