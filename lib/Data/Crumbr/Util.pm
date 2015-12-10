@@ -12,6 +12,7 @@ sub json_leaf_encoder {
 
 {
    my $slash_escaped;
+
    BEGIN {
       $slash_escaped = {
          0x22 => '"',
@@ -23,7 +24,7 @@ sub json_leaf_encoder {
          0x0D => 'r',
          0x09 => 't',
       };
-   }
+   } ## end BEGIN
 
    sub _json_leaf_encode {
       return 'null' unless defined $_[0];
@@ -32,21 +33,21 @@ sub json_leaf_encoder {
       return '[]' if $reftype eq 'ARRAY';
       return '{}' if $reftype eq 'HASH';
       return (${$_[0]} ? 'true' : 'false')
-      if $reftype eq 'SCALAR';
+        if $reftype eq 'SCALAR';
 
       if (my $package = blessed($_[0])) {
          my $reftype = reftype($_[0]);
          return (${$_[0]} ? 'true' : 'false')
-         if ($reftype eq 'SCALAR') && ($package =~ /bool/mxsi);
+           if ($reftype eq 'SCALAR') && ($package =~ /bool/mxsi);
       }
 
       croak "unsupported ref type $reftype" if $reftype;
 
       my $number_flags = B::SVp_IOK() | B::SVp_NOK();
       return $_[0]
-      if (B::svref_2object(\$_[0])->FLAGS() & $number_flags)
-      && 0 + $_[0] eq $_[0]
-      && $_[0] * 0 == 0;
+        if (B::svref_2object(\$_[0])->FLAGS() & $number_flags)
+        && 0 + $_[0] eq $_[0]
+        && $_[0] * 0 == 0;
 
       my $string = join '', map {
          my $cp = ord($_);
@@ -77,6 +78,7 @@ sub uri_encoder {
 
 {
    my %is_unreserved;
+
    BEGIN {
       my @u = ('a' .. 'z', 'A' .. 'Z', '0' .. '9', qw< - _ . ~ >);
       %is_unreserved = map { $_ => 1 } @u;

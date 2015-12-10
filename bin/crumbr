@@ -58,10 +58,10 @@ sub read_data_yaml {
       next if $EVAL_ERROR;
       my $function = $class->can('Load');
       return $function->($unicode_string);
-   }
+   } ## end for my $class (qw< YAML::XS YAML YAML::Tiny >)
    die "cannot find any YAML module\n";
    return;
-}
+} ## end sub read_data_yaml
 
 sub read_data_json {
    my ($config, $filename) = @_;
@@ -69,7 +69,7 @@ sub read_data_json {
 
    require Encode;
    my $utf8_octets =
-      Encode::encode('UTF-8', $unicode_string, Encode::FB_CROAK());
+     Encode::encode('UTF-8', $unicode_string, Encode::FB_CROAK());
 
    my @cs = qw< Cpanel::JSON::XS JSON::XS Mojo::JSON JSON::PP >;
    for my $class (@cs) {
@@ -78,9 +78,9 @@ sub read_data_json {
       my $function = $class->can('decode_json');
       my $retval = eval { $function->($utf8_octets) };
       die "errors parsing input: $EVAL_ERROR\n"
-         if $EVAL_ERROR;
+        if $EVAL_ERROR;
       return $retval;
-   }
+   } ## end for my $class (@cs)
    die "cannot find any JSON module\n";
    return;
 } ## end sub read_data_json
@@ -88,7 +88,7 @@ sub read_data_json {
 sub slurp_octets {
    require Encode;
    return Encode::encode('UTF-8', slurp(@_), Encode::FB_CROAK());
-} ## end sub slurp_octets
+}
 
 sub slurp {
    my ($filename, $encoding) = @_;
@@ -101,7 +101,7 @@ sub slurp {
    binmode $fh, ":encoding($encoding)";
    local $INPUT_RECORD_SEPARATOR = undef;    # slurp mode
    return <$fh>;
-} ## end sub slurp_octets
+} ## end sub slurp
 
 sub get_output {
    my ($config) = @_;

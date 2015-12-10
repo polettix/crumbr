@@ -7,18 +7,18 @@ sub profile {
    my $json_encoder = Data::Crumbr::Util::json_leaf_encoder();
    my $uri_encoder  = Data::Crumbr::Util::uri_encoder();
    return {
-      array_open        => '',
-      array_close       => '',
-      array_key_prefix  => '',
-      array_key_suffix  => '',
+      array_open       => '',
+      array_close      => '',
+      array_key_prefix => '',
+      array_key_suffix => '',
 
-      hash_open         => '',
-      hash_close        => '',
-      hash_key_prefix   => '',
-      hash_key_suffix   => '',
+      hash_open       => '',
+      hash_close      => '',
+      hash_key_prefix => '',
+      hash_key_suffix => '',
 
-      keys_separator    => '/',
-      value_separator   => ' ',
+      keys_separator  => '/',
+      value_separator => ' ',
 
       array_key_encoder => $uri_encoder,
       hash_key_encoder  => $uri_encoder,
