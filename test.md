@@ -1,5 +1,6 @@
 ---
 title: whatever
+layout: page
 ---
 
 ## This is a test
