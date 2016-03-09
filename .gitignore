@@ -1,0 +1,4 @@
+*.swp
+Data-Crumbr-*.tar.gz
+Data-Crumbr-*/
+.build/
