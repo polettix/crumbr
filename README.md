@@ -45,6 +45,8 @@ SYNOPSIS
 ALL THE REST
 ============
 
+There's [a page about it](http://polettix.github.io/crumbr).
+
 Want to know more? [See the module's documentation](http://search.cpan.org/perldoc?App::Crumbr) to figure out
 all the bells and whistles of this module!
 
