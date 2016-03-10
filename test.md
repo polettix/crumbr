@@ -1,7 +1,7 @@
 ---
 title: Crumbr
 layout: page
-tagline: whatever comes to mind
+tagline: Render data structures for easy searching and parsing
 ---
 
 ## Crumbr is a library... mostly
