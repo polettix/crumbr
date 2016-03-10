@@ -1,9 +1,12 @@
 ---
-title: whatever
+title: Crumbr
 layout: page
 tagline: whatever comes to mind
 ---
 
-## This is a test
+## Crumbr is a library... mostly
 
-Just some test text.
+Crumbr is used by [teepee](https://github.com/polettix/teepee), so
+most probably you don't have to worry about it. Otherwise... install
+[Data::Crumbr](https://metacpan.org/pod/Data::Crumbr) with your
+favourite CPAN client!
