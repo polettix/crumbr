@@ -6,6 +6,7 @@ plan skip_all => "Mojo::JSON required for this test"
 
 use Data::Crumbr;
 use File::Spec::Functions qw< splitpath catpath >;
+use lib qw< . >;
 my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
 

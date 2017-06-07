@@ -6,6 +6,7 @@ plan skip_all => "JSON::PP required for testing JSON::PP::Boolean ($@)"
 
 use Data::Crumbr;
 use File::Spec::Functions qw< splitpath catpath >;
+use lib qw< . >;
 my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
 

@@ -1,6 +1,7 @@
 use Test::More;
 use Data::Crumbr;
 use File::Spec::Functions qw< splitpath catpath >;
+use lib qw< . >;
 my ($v, $d) = splitpath(__FILE__);
 my $data = do(catpath($v, $d, 'data.pl'));
 
